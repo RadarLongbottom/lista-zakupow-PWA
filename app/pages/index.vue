@@ -43,10 +43,10 @@ const completedCount = computed(() => {
 <template>
   <section class="home">
     <div class="hero">
-      <h1>Smart Shopping List</h1>
+      <h1>Listy zakupów</h1>
 
       <p>
-        Twórz wiele list zakupów i zaznaczaj produkty bezpośrednio z ekranu głównego.
+        Twórz swoje listy zakupów i zaznaczaj produkty bezpośrednio z ekranu głównego.
       </p>
 
       <NuxtLink to="/shopping" class="button">
