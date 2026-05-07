@@ -52,26 +52,32 @@ export default defineNuxtConfig({
     workbox: {
       navigateFallback: '/',
 
+      navigateFallbackDenylist: [
+        /^\/api\//
+      ],
+
       globPatterns: [
         '**/*.{js,css,html,png,svg,ico,webmanifest}'
       ],
 
       runtimeCaching: [
         {
-          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-          handler: 'CacheFirst',
+          urlPattern: ({ request }) => request.mode === 'navigate',
+          handler: 'NetworkFirst',
           options: {
-            cacheName: 'google-fonts-stylesheets'
+            cacheName: 'pages-cache',
+            networkTimeoutSeconds: 3
           }
         },
         {
-          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+          urlPattern: ({ request }) =>
+            ['script', 'style', 'image', 'font'].includes(request.destination),
           handler: 'CacheFirst',
           options: {
-            cacheName: 'google-fonts-webfonts',
+            cacheName: 'assets-cache',
             expiration: {
-              maxEntries: 30,
-              maxAgeSeconds: 60 * 60 * 24 * 365
+              maxEntries: 100,
+              maxAgeSeconds: 60 * 60 * 24 * 30
             }
           }
         }
