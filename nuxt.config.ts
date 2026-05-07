@@ -5,16 +5,24 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Lista zakupów PWA',
+      title: 'Smart Shopping List PWA',
 
       meta: [
         {
           name: 'description',
-          content: 'Prosta aplikacja PWA w Nuxt 4'
+          content: 'Interaktywna aplikacja PWA do tworzenia list zakupów'
         },
         {
           name: 'theme-color',
-          content: '#111827'
+          content: '#2563eb'
+        },
+        {
+          name: 'apple-mobile-web-app-capable',
+          content: 'yes'
+        },
+        {
+          name: 'apple-mobile-web-app-status-bar-style',
+          content: 'default'
         }
       ],
 
@@ -27,6 +35,10 @@ export default defineNuxtConfig({
           rel: 'icon',
           type: 'image/png',
           href: '/icon-192.png'
+        },
+        {
+          rel: 'apple-touch-icon',
+          href: '/icon-192.png'
         }
       ]
     }
@@ -38,7 +50,32 @@ export default defineNuxtConfig({
     manifest: false,
 
     workbox: {
-      navigateFallback: '/'
+      navigateFallback: '/',
+
+      globPatterns: [
+        '**/*.{js,css,html,png,svg,ico,webmanifest}'
+      ],
+
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts-stylesheets'
+          }
+        },
+        {
+          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts-webfonts',
+            expiration: {
+              maxEntries: 30,
+              maxAgeSeconds: 60 * 60 * 24 * 365
+            }
+          }
+        }
+      ]
     },
 
     devOptions: {
