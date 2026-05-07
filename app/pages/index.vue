@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 interface ShoppingItem {
   id: number
@@ -23,6 +23,14 @@ onMounted(() => {
   }
 })
 
+watch(
+  lists,
+  () => {
+    localStorage.setItem('shopping-lists', JSON.stringify(lists.value))
+  },
+  { deep: true }
+)
+
 const latestList = computed(() => {
   return [...lists.value].sort((a, b) => b.id - a.id)[0] ?? null
 })
@@ -35,14 +43,14 @@ const completedCount = computed(() => {
 <template>
   <section class="home">
     <div class="hero">
-      <h1>Listy zakupów</h1>
+      <h1>Smart Shopping List</h1>
 
       <p>
-        Twórz swoje listy zakupów i miej je zawsze pod ręką.
+        Twórz wiele list zakupów i zaznaczaj produkty bezpośrednio z ekranu głównego.
       </p>
 
       <NuxtLink to="/shopping" class="button">
-        Otwórz listy zakupów
+        Zarządzaj listami
       </NuxtLink>
     </div>
 
@@ -55,15 +63,22 @@ const completedCount = computed(() => {
         Kupione: {{ completedCount }} / {{ latestList.items.length }}
       </p>
 
-      <ul v-if="latestList.items.length">
-        <li
-          v-for="item in latestList.items.slice(0, 5)"
+      <div v-if="latestList.items.length" class="items">
+        <label
+          v-for="item in latestList.items"
           :key="item.id"
-          :class="{ done: item.done }"
+          class="item"
         >
-          {{ item.name }}
-        </li>
-      </ul>
+          <input
+            v-model="item.done"
+            type="checkbox"
+          />
+
+          <span :class="{ done: item.done }">
+            {{ item.name }}
+          </span>
+        </label>
+      </div>
 
       <p v-else class="empty">
         Ta lista nie ma jeszcze produktów.
@@ -140,19 +155,33 @@ const completedCount = computed(() => {
   font-weight: 600;
 }
 
-ul {
+.items {
   display: grid;
-  gap: 10px;
-  padding: 0;
-  margin-top: 20px;
-  list-style: none;
+  gap: 12px;
+  margin-top: 22px;
 }
 
-li {
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   background: #f9fafb;
-  padding: 14px;
-  border-radius: 16px;
+  padding: 16px;
+  border-radius: 18px;
   font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.item:hover {
+  background: #f3f4f6;
+  transform: translateY(-2px);
+}
+
+.item input {
+  width: 20px;
+  height: 20px;
+  accent-color: #2563eb;
 }
 
 .done {
